@@ -7,20 +7,28 @@ import (
 	"strings"
 )
 
-func Awk(data, field, columnNumber string) {
+func Awk(data, field string, columnNumber []string) {
 
-	//fmt.Println(data, field, columnNumber)
+	var fieldsChosen string
 
-	column, err := strconv.Atoi(columnNumber)
+	for _, value := range columnNumber {
 
-	if err != nil {
+		c := value
 
-		log.Printf("string is not converted to int : %v", err)
+		column, err := strconv.Atoi(c)
+
+		if err != nil {
+
+			log.Printf("the string Converter did not work : %v", err)
+		}
+
+		column = column - 1
+
+		columnChose := strings.Split(data, "|")
+
+		fieldsChosen += fmt.Sprintf("%v  ", columnChose[column])
+
 	}
 
-	column = column - 1 
-
-	columns := strings.Split(data, "|")
-
-	fmt.Println(columns[column])
+	fmt.Println(fieldsChosen)
 }
