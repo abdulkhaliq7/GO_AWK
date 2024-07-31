@@ -9,7 +9,9 @@ func main() {
 
 	field := "|"
 
-	columnNumber := []string{"1", "3"}
+	columnNumber := []string{"1", "3", "0"}
 
-	awk.Awk(data, field, columnNumber)
+	printingFiled := ","
+
+	awk.Awk(data, field, printingFiled, columnNumber)
 }

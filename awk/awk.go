@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func Awk(data, field string, columnNumber []string) {
+func Awk(data, splitField, printingField string, columnNumber []string) {
 
 	var fieldsChosen string
 
@@ -22,11 +22,23 @@ func Awk(data, field string, columnNumber []string) {
 			log.Printf("the string Converter did not work : %v", err)
 		}
 
+		columnChose := strings.Split(data, splitField)
+
+		//this is to print if the entered column is 0
+		if column == 0 {
+
+			for _, all := range columnChose {
+
+				fieldsChosen += fmt.Sprintf("%v%v", all, printingField)
+
+			}
+
+			continue
+		}
+
 		column = column - 1
 
-		columnChose := strings.Split(data, "|")
-
-		fieldsChosen += fmt.Sprintf("%v  ", columnChose[column])
+		fieldsChosen += fmt.Sprintf("%v%v", printingField, columnChose[column])
 
 	}
 
