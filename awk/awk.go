@@ -2,8 +2,8 @@ package awk
 
 import (
 	"fmt"
-	_ "log"
-	_ "strconv"
+	"log"
+	"strconv"
 	"strings"
 )
 
@@ -55,7 +55,7 @@ func WithPrintingField(printingField string) Options {
 	}
 }
 
-func (a *Awk) DataAndSplitField() string {
+func dataAndSplitFieldAndPrintingField(a *Awk) string {
 	var fieldsChosen string
 	columnChose := strings.Split(a.data, a.splitField)
 
@@ -66,6 +66,44 @@ func (a *Awk) DataAndSplitField() string {
 	}
 
 	return fieldsChosen
+}
+
+func columnNumber(a *Awk) string {
+	var fieldsChosen string
+
+	for _, value := range a.columnNumber {
+
+		c := value
+
+		column, err := strconv.Atoi(c)
+
+		if err != nil {
+
+			log.Printf("the string Converter did not work : %v", err)
+		}
+
+		columnChose := strings.Split(a.data, a.splitField)
+
+		column = column - 1
+
+		fieldsChosen += fmt.Sprintf("%v%v", a.printingField, columnChose[column])
+
+	}
+
+	return fieldsChosen
+}
+
+func (a *Awk) GetFilteredData() string {
+
+	var filteredData string
+
+	if len(a.columnNumber) != 0 {
+		filteredData = columnNumber(a)
+	} else {
+		filteredData = dataAndSplitFieldAndPrintingField(a)
+	}
+
+	return filteredData
 }
 
 /*
