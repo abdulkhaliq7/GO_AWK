@@ -1,28 +1,27 @@
 package awk
 
 import (
-	"fmt"
-	"log"
-	"strconv"
-	"strings"
+	_ "fmt"
+	_ "log"
+	_ "strconv"
+	_ "strings"
 )
 
 type Awk struct {
-	data string
-	splitField string
+	data          string
+	splitField    string
 	printingField string
-	columnNumber []string
-	replaceData string
+	columnNumber  []string
+	replaceData   string
 }
 
 type Options func(*Awk)
-
 
 func NewAwk(options ...Options) *Awk {
 
 	a := &Awk{}
 
-	for _, o:= range options {
+	for _, o := range options {
 		o(a)
 	}
 
@@ -30,7 +29,35 @@ func NewAwk(options ...Options) *Awk {
 
 }
 
+func WithDataAndSplitField(data, field string) Options {
+	return func(a *Awk) {
+		a.splitField = field
+		a.data=data
+	}
+}
 
+func WithColumnNumber(columnNumber []string) Options {
+	return func(a *Awk) {
+		a.columnNumber = columnNumber
+	}
+}
+
+
+func WithReplaceData(replaceData string) Options {
+	return func(a *Awk) {
+		a.replaceData=replaceData
+	}
+}
+
+func WithPrintingField(printingField string) Options {
+	return func(a *Awk) {
+		a.printingField=printingField
+	}
+}
+
+
+
+/*
 
 func NewAwk(options ...Options) {
 
@@ -69,3 +96,5 @@ func NewAwk(options ...Options) {
 
 	fmt.Println(fieldsChosen)
 }
+
+*/
