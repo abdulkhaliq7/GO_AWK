@@ -1,6 +1,7 @@
 package awk
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -68,7 +69,7 @@ func dataAndSplitFieldAndPrintingField(a *Awk) string {
 	return fieldsChosen
 }
 
-func columnNumber(a *Awk) string {
+func columnNumber(a *Awk) (string, error) {
 	var fieldsChosen string
 
 	for _, value := range a.columnNumber {
@@ -80,6 +81,18 @@ func columnNumber(a *Awk) string {
 		if err != nil {
 
 			log.Printf("the string Converter did not work : %v", err)
+			return "", err
+		}
+
+		if column == 0 {
+
+			err := errors.New("you can not enter column 0, to print all you can choose the configuration of --WithDataAndSplitFieldAndPrintingField-- ")
+
+			if err != nil {
+				log.Printf("the string Converter did not work : %v", err)
+				return "", err
+			}
+
 		}
 
 		columnChose := strings.Split(a.data, a.splitField)
@@ -90,20 +103,22 @@ func columnNumber(a *Awk) string {
 
 	}
 
-	return fieldsChosen
+	return fieldsChosen, nil
 }
 
-func (a *Awk) GetFilteredData() string {
+func (a *Awk) GetFilteredData() (string, error) {
 
 	var filteredData string
 
+	var err error
+
 	if len(a.columnNumber) != 0 {
-		filteredData = columnNumber(a)
+		filteredData, err = columnNumber(a)
 	} else {
 		filteredData = dataAndSplitFieldAndPrintingField(a)
 	}
 
-	return filteredData
+	return filteredData, err
 }
 
 /*

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github/abdulkhaliq/awk/awk"
+	"log"
 )
 
 func main() {
@@ -13,7 +14,7 @@ func main() {
 
 	printingField := "="
 
-	columnNumber := []string{"1", "3"}
+	//columnNumber := []string{"1", "3"}
 
 	//printingFiled := ","
 
@@ -21,10 +22,14 @@ func main() {
 
 	awk := awk.NewAwk(
 		awk.WithDataAndSplitFieldAndPrintingField(data, field, printingField),
-		awk.WithColumnNumber(columnNumber),
+		//awk.WithColumnNumber(columnNumber),
 	)
 
-	output := awk.GetFilteredData()
+	output, err := awk.GetFilteredData()
+
+	if err != nil {
+		log.Println(err)
+	}
 
 	fmt.Println(output)
 }
