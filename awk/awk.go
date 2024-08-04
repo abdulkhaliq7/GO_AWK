@@ -1,10 +1,10 @@
 package awk
 
 import (
-	_ "fmt"
+	"fmt"
 	_ "log"
 	_ "strconv"
-	_ "strings"
+	"strings"
 )
 
 type Awk struct {
@@ -29,10 +29,11 @@ func NewAwk(options ...Options) *Awk {
 
 }
 
-func WithDataAndSplitField(data, field string) Options {
+func WithDataAndSplitFieldAndPrintingField(data, field, printingField string) Options {
 	return func(a *Awk) {
 		a.splitField = field
-		a.data=data
+		a.data = data
+		a.printingField = printingField
 	}
 }
 
@@ -42,20 +43,30 @@ func WithColumnNumber(columnNumber []string) Options {
 	}
 }
 
-
 func WithReplaceData(replaceData string) Options {
 	return func(a *Awk) {
-		a.replaceData=replaceData
+		a.replaceData = replaceData
 	}
 }
 
 func WithPrintingField(printingField string) Options {
 	return func(a *Awk) {
-		a.printingField=printingField
+		a.printingField = printingField
 	}
 }
 
+func (a *Awk) DataAndSplitField() string {
+	var fieldsChosen string
+	columnChose := strings.Split(a.data, a.splitField)
 
+	for _, all := range columnChose {
+
+		fieldsChosen += fmt.Sprintf("%v%v", all, a.printingField)
+
+	}
+
+	return fieldsChosen
+}
 
 /*
 
