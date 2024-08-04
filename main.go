@@ -13,5 +13,5 @@ func main() {
 
 	printingFiled := ","
 
-	awk.Awk(data, field, printingFiled, columnNumber)
+	awk.NewAwk(data, field, printingFiled, columnNumber)
 }

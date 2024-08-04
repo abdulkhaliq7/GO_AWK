@@ -7,7 +7,32 @@ import (
 	"strings"
 )
 
-func Awk(data, splitField, printingField string, columnNumber []string) {
+type Awk struct {
+	data string
+	splitField string
+	printingField string
+	columnNumber []string
+	replaceData string
+}
+
+type Options func(*Awk)
+
+
+func NewAwk(options ...Options) *Awk {
+
+	a := &Awk{}
+
+	for _, o:= range options {
+		o(a)
+	}
+
+	return a
+
+}
+
+
+
+func NewAwk(options ...Options) {
 
 	var fieldsChosen string
 
