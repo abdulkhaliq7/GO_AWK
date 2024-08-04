@@ -13,7 +13,8 @@ type Awk struct {
 	splitField    string
 	printingField string
 	columnNumber  []string
-	replaceData   string
+	dataToReplace string
+	replaceTo     string
 }
 
 type Options func(*Awk)
@@ -44,9 +45,10 @@ func WithColumnNumber(columnNumber []string) Options {
 	}
 }
 
-func WithReplaceData(replaceData string) Options {
+func WithReplaceAll(dataToReplace, replaceTo string) Options {
 	return func(a *Awk) {
-		a.replaceData = replaceData
+		a.dataToReplace = dataToReplace
+		a.replaceTo = replaceTo
 	}
 }
 
@@ -106,6 +108,55 @@ func columnNumber(a *Awk) (string, error) {
 	return fieldsChosen, nil
 }
 
+func replace(a *Awk) (string, error) {
+	var fieldsChosen string
+	if len(a.columnNumber) != 0 {
+
+		for _, value := range a.columnNumber {
+
+			c := value
+
+			column, err := strconv.Atoi(c)
+
+			if err != nil {
+
+				log.Printf("the string Converter did not work : %v", err)
+				return "", err
+			}
+
+			if column == 0 {
+
+				err := errors.New("you can not enter column 0, to print all you can choose the configuration of --WithDataAndSplitFieldAndPrintingField-- ")
+
+				if err != nil {
+					log.Printf("the string Converter did not work : %v", err)
+					return "", err
+				}
+
+			}
+
+			columnChose := strings.Split(a.data, a.splitField)
+
+			column = column - 1
+
+			fieldsChosen += fmt.Sprintf("%v%v", a.printingField, columnChose[column])
+
+		}
+	} else {
+		columnChose := strings.Split(a.data, a.splitField)
+
+		for _, all := range columnChose {
+
+			fieldsChosen += fmt.Sprintf("%v%v", all, a.printingField)
+
+		}
+	}
+
+	fieldsChosen = strings.ReplaceAll(fieldsChosen, a.dataToReplace, a.replaceTo)
+
+	return fieldsChosen, nil
+}
+
 func (a *Awk) GetFilteredData() (string, error) {
 
 	var filteredData string
@@ -114,6 +165,9 @@ func (a *Awk) GetFilteredData() (string, error) {
 
 	if len(a.columnNumber) != 0 {
 		filteredData, err = columnNumber(a)
+	} else if a.dataToReplace != "" || a.replaceTo != "" {
+
+		filteredData, err = replace(a)
 	} else {
 		filteredData = dataAndSplitFieldAndPrintingField(a)
 	}

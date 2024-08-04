@@ -23,6 +23,7 @@ func main() {
 	awk := awk.NewAwk(
 		awk.WithDataAndSplitFieldAndPrintingField(data, field, printingField),
 		//awk.WithColumnNumber(columnNumber),
+		awk.WithReplaceAll("633022241", "634001157"),
 	)
 
 	output, err := awk.GetFilteredData()
