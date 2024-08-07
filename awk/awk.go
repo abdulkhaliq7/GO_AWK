@@ -11,8 +11,6 @@ type Awk struct {
 	Data string
 }
 
-type Options func(*Awk)
-
 func NewAwk(data string) *Awk {
 
 	return &Awk{Data: data}
@@ -50,4 +48,11 @@ func (a *Awk) DataSplit(splitField, printingField string, columnNumbers ...strin
 	}
 
 	return &Awk{Data: fieldsChosen}
+}
+
+func (a *Awk) Replace(old, new string) *Awk {
+
+	updatedData := strings.ReplaceAll(a.Data, old, new)
+
+	return &Awk{Data: updatedData}
 }

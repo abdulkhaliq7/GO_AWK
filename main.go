@@ -11,7 +11,7 @@ func main() {
 
 	newAwk := awk.NewAwk(data)
 
-	output := newAwk.DataSplit("|", " ").DataSplit(" ", " ", "0", "2")
+	output := newAwk.DataSplit("|", " ").DataSplit(" ", " ", "0", "2").Replace("633022241", "634001157")
 
 	fmt.Println(output.Data)
 
