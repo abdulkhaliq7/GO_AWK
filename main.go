@@ -7,12 +7,13 @@ import (
 
 func main() {
 
-	data := "633022241|4000000|$30|20240731"
+	data := ``
+
+	//data = "633022241|4000000|$30|20240731"
 
 	newAwk := awk.NewAwk(data)
 
-	output := newAwk.DataSplit("|", " ").DataSplit(" ", " ", "0", "2").Replace("633022241", "634001157")
-
+	output := newAwk.DataSplit("|", " ", "35").DataSplit(`\`, "=", "26", "70").DataSplit("=", " ").Replace(",", "")
 	fmt.Println(output.Data)
 
 }

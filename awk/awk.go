@@ -17,10 +17,10 @@ func NewAwk(data string) *Awk {
 
 }
 
-func (a *Awk) DataSplit(splitField, printingField string, columnNumbers ...string) *Awk {
+func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...string) *Awk {
 	var fieldsChosen string
 
-	if len(columnNumbers) == 0 {
+	if len(chosenColumns) == 0 {
 
 		splittedData := strings.Split(a.Data, splitField)
 
@@ -29,7 +29,7 @@ func (a *Awk) DataSplit(splitField, printingField string, columnNumbers ...strin
 		}
 
 	} else {
-		for _, value := range columnNumbers {
+		for _, value := range chosenColumns {
 
 			c := value
 
@@ -42,7 +42,14 @@ func (a *Awk) DataSplit(splitField, printingField string, columnNumbers ...strin
 
 			splittedData := strings.Split(a.Data, splitField)
 
-			fieldsChosen += fmt.Sprintf("%v%v", splittedData[column], printingField)
+			// Print the resulting fields
+			for i, field := range splittedData {
+				if column == i {
+					fieldsChosen += fmt.Sprintf("%v%v", field, printingField)
+				} else {
+					continue
+				}
+			}
 
 		}
 	}
