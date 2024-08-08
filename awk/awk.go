@@ -42,15 +42,7 @@ func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...strin
 
 			splittedData := strings.Split(a.Data, splitField)
 
-			// Print the resulting fields
-			for i, field := range splittedData {
-				if column == i {
-					fieldsChosen += fmt.Sprintf("%v%v", field, printingField)
-				} else {
-					continue
-				}
-			}
-
+			fieldsChosen += fmt.Sprintf("%v%v", splittedData[column], printingField)
 		}
 	}
 
