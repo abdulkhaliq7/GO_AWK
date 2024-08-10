@@ -41,6 +41,10 @@ func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...strin
 				fieldsChosen += fmt.Sprintf("%v%v", all, printingField)
 			}
 
+			newLine := "\n"
+
+			fieldsChosen += fmt.Sprintf("%v", newLine)
+
 		} else {
 			for _, value := range chosenColumns {
 
@@ -57,6 +61,10 @@ func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...strin
 
 				fieldsChosen += fmt.Sprintf("%v%v", splittedData[column], printingField)
 			}
+
+			newLine := "\n"
+
+			fieldsChosen += fmt.Sprintf("%v", newLine)
 		}
 
 	}
