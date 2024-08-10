@@ -1,6 +1,7 @@
 package awk
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"strconv"
@@ -20,30 +21,44 @@ func NewAwk(data string) *Awk {
 func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...string) *Awk {
 	var fieldsChosen string
 
-	if len(chosenColumns) == 0 {
+	// Create a new reader for the data string
+	reader := strings.NewReader(a.Data)
 
-		splittedData := strings.Split(a.Data, splitField)
+	// Create a scanner to read data line by line
+	scanner := bufio.NewScanner(reader)
 
-		for _, all := range splittedData {
-			fieldsChosen += fmt.Sprintf("%v%v", all, printingField)
-		}
+	// Scan the data line by line
 
-	} else {
-		for _, value := range chosenColumns {
+	for scanner.Scan() {
 
-			c := value
+		line := scanner.Text()
 
-			column, err := strconv.Atoi(c)
+		if len(chosenColumns) == 0 {
 
-			if err != nil {
+			splittedData := strings.Split(line, splitField)
 
-				log.Printf("the string Converter did not work : %v", err)
+			for _, all := range splittedData {
+				fieldsChosen += fmt.Sprintf("%v%v", all, printingField)
 			}
 
-			splittedData := strings.Split(a.Data, splitField)
+		} else {
+			for _, value := range chosenColumns {
 
-			fieldsChosen += fmt.Sprintf("%v%v", splittedData[column], printingField)
+				c := value
+
+				column, err := strconv.Atoi(c)
+
+				if err != nil {
+
+					log.Printf("the string Converter did not work : %v", err)
+				}
+
+				splittedData := strings.Split(line, splitField)
+
+				fieldsChosen += fmt.Sprintf("%v%v", splittedData[column], printingField)
+			}
 		}
+
 	}
 
 	return &Awk{Data: fieldsChosen}
