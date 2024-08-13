@@ -59,7 +59,13 @@ func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...strin
 
 				splittedData := strings.Split(line, splitField)
 
-				fieldsChosen += fmt.Sprintf("%v%v", splittedData[column], printingField)
+				if len(splittedData) > column {
+					fieldsChosen += fmt.Sprintf("%v%v", splittedData[column], printingField)
+				} else {
+
+					log.Printf("the chosen column %v is greater than the length of the string %v", column, len(splittedData))
+				}
+
 			}
 
 			newLine := "\n"

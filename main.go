@@ -1,14 +1,19 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"github/abdulkhaliq/awk/awk"
 	"log"
 	"os"
 	"runtime/pprof"
+	"time"
 )
 
 func main() {
+
+	// Get the current time
+	start := time.Now()
 
 	// Start CPU profiling
 	f, err := os.Create("cpu.pprof")
@@ -22,16 +27,36 @@ func main() {
 	}
 	defer pprof.StopCPUProfile()
 
-	//files read
-	data := `633022241|4000000|$30|20240731
-	633022241|4000000|$30|20240731`
+	file, err := os.Open("cdr.txt")
 
-	newAwk := awk.NewAwk(data)
+	if err != nil {
+		log.Println(err)
+	}
 
-	output := newAwk.DataSplit("|", " ", "0", "2").Replace("633022241", "634001157")
+	// Create a buffer to read the file
+	bufferSize := 10485760
+	// Read strings using bufio.Reader
+	for {
 
-	//output := newAwk.DataSplit("|", " ").Replace("633022241", "634001157")
+		reader := bufio.NewReaderSize(file, bufferSize)
 
-	fmt.Println(output.Data)
+		// Read until newline and store in a buffer
+		line, err := reader.ReadString('\n')
+
+		fmt.Println(line)
+		if err != nil {
+			if err.Error() != "EOF" {
+				log.Fatal(err)
+			}
+		}
+
+		newAwk := awk.NewAwk(line)
+
+		output := newAwk.DataSplit("|", "", "35").DataSplit(`\`, "", "26", "70")
+
+		fmt.Println(output.Data)
+	}
+
+	fmt.Println("Total time taken to complete The whole process : ", time.Since(start))
 
 }
