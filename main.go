@@ -28,12 +28,10 @@ func main() {
 
 		output := newAwk.DataSplit("|", "", "35").DataSplit(`\`, "", "26", "70")
 
+		//output := newAwk.DataSplit("|","")
+
 		fmt.Println(output.Data)
 	}
 	fmt.Println("Total time taken to complete The whole process : ", time.Since(start))
 
 }
-
-
-
-
