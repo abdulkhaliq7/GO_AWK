@@ -1,7 +1,7 @@
 package awk
 
 import (
-	"fmt"
+	"bufio"
 	"log"
 	"strconv"
 	"strings"
@@ -23,36 +23,23 @@ func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...strin
 	var wg sync.WaitGroup
 
 	channel := make(chan string, 200)
+	// Create a new reader for the data string
+	reader := strings.NewReader(a.Data)
 
-	/*
-		// Create a new reader for the data string
-		reader := strings.NewReader(a.Data)
+	// Create a scanner to read data line by line
+	scanner := bufio.NewScanner(reader)
 
-		// Create a scanner to read data line by line
-		scanner := bufio.NewScanner(reader)
+	// Scan the data line by line
 
-		// Scan the data line by line
+	//fmt.Println(a.Data)
 
-		//fmt.Println(a.Data)
+	for scanner.Scan() {
+		wg.Add(1)
 
-		for scanner.Scan() {
-			wg.Add(1)
+		line := scanner.Text()
 
-			line := scanner.Text()
+		go filter(line, splitField, printingField, channel, &wg, chosenColumns...)
 
-			go filter(line, splitField, printingField, channel, &wg, chosenColumns...)
-
-		}
-
-	*/
-
-	for  {
-		if a.Data != "" {
-			wg.Add(1)
-			go filter(a.Data, splitField, printingField, channel, &wg, chosenColumns...)
-		}else {
-			break 
-		}
 	}
 
 	go func() {
@@ -69,7 +56,9 @@ func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...strin
 
 func filter(line, splitField, printingField string, channel chan<- string, wg *sync.WaitGroup, chosenColumns ...string) {
 
-	var fieldsChosen string
+	//var fieldsChosen string
+
+	var fieldsChosen strings.Builder
 
 	defer wg.Done()
 
@@ -78,12 +67,14 @@ func filter(line, splitField, printingField string, channel chan<- string, wg *s
 		splittedData := strings.Split(line, splitField)
 
 		for _, all := range splittedData {
-			fieldsChosen += fmt.Sprintf("%v%v", all, printingField)
+			//fieldsChosen += fmt.Sprintf("%v%v", all, printingField)
+			fieldsChosen.WriteString(all + printingField)
 		}
 
 		newLine := "\n"
 
-		fieldsChosen += fmt.Sprintf("%v", newLine)
+		//fieldsChosen += fmt.Sprintf("%v", newLine)
+		fieldsChosen.WriteString(newLine)
 
 	} else {
 		for _, value := range chosenColumns {
@@ -100,7 +91,8 @@ func filter(line, splitField, printingField string, channel chan<- string, wg *s
 			splittedData := strings.Split(line, splitField)
 
 			if len(splittedData) > column {
-				fieldsChosen += fmt.Sprintf("%v%v", splittedData[column], printingField)
+				//fieldsChosen += fmt.Sprintf("%v%v", splittedData[column], printingField)
+				fieldsChosen.WriteString(splittedData[column] + printingField)
 			} else {
 
 				log.Printf("the chosen column %v is greater than the length of the string %v", column, len(splittedData))
@@ -110,10 +102,11 @@ func filter(line, splitField, printingField string, channel chan<- string, wg *s
 
 		newLine := "\n"
 
-		fieldsChosen += fmt.Sprintf("%v", newLine)
+		//fieldsChosen += fmt.Sprintf("%v", newLine)
+		fieldsChosen.WriteString(newLine)
 	}
 
-	channel <- fieldsChosen
+	channel <- fieldsChosen.String()
 }
 
 func (a *Awk) Replace(old, new string) *Awk {
