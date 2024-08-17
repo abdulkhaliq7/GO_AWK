@@ -1,7 +1,6 @@
 package awk
 
 import (
-	"bufio"
 	"fmt"
 	"log"
 	"strconv"
@@ -20,25 +19,40 @@ func NewAwk(data string) *Awk {
 }
 
 func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...string) *Awk {
-	//var channel string
 
 	var wg sync.WaitGroup
 
 	channel := make(chan string, 200)
-	// Create a new reader for the data string
-	reader := strings.NewReader(a.Data)
 
-	// Create a scanner to read data line by line
-	scanner := bufio.NewScanner(reader)
+	/*
+		// Create a new reader for the data string
+		reader := strings.NewReader(a.Data)
 
-	// Scan the data line by line
+		// Create a scanner to read data line by line
+		scanner := bufio.NewScanner(reader)
 
-	for scanner.Scan() {
-		wg.Add(1)
-		line := scanner.Text()
+		// Scan the data line by line
 
-		filter(line, splitField, printingField, channel, chosenColumns...)
+		//fmt.Println(a.Data)
 
+		for scanner.Scan() {
+			wg.Add(1)
+
+			line := scanner.Text()
+
+			go filter(line, splitField, printingField, channel, &wg, chosenColumns...)
+
+		}
+
+	*/
+
+	for  {
+		if a.Data != "" {
+			wg.Add(1)
+			go filter(a.Data, splitField, printingField, channel, &wg, chosenColumns...)
+		}else {
+			break 
+		}
 	}
 
 	go func() {
@@ -53,9 +67,11 @@ func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...strin
 	return nil
 }
 
-func filter(line, splitField, printingField string, channel chan<- string, chosenColumns ...string) {
+func filter(line, splitField, printingField string, channel chan<- string, wg *sync.WaitGroup, chosenColumns ...string) {
 
 	var fieldsChosen string
+
+	defer wg.Done()
 
 	if len(chosenColumns) == 0 {
 
