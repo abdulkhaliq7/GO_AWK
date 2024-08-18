@@ -2,7 +2,7 @@ package awk
 
 import (
 	"bufio"
-	"log"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -17,15 +17,15 @@ func NewAwk(data string) *Awk {
 
 }
 
-func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...string) *Awk {
+func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...string) (*Awk, error) {
 
 	reader := strings.NewReader(a.Data)
 	scanner := bufio.NewScanner(reader)
 	var fieldsChosen strings.Builder
 	for scanner.Scan() {
 		line := scanner.Text()
+		splittedData := strings.Split(line, splitField)
 		if len(chosenColumns) == 0 {
-			splittedData := strings.Split(line, splitField)
 			for _, all := range splittedData {
 				fieldsChosen.WriteString(all)
 				fieldsChosen.WriteString(printingField)
@@ -37,21 +37,20 @@ func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...strin
 				c := value
 				column, err := strconv.Atoi(c)
 				if err != nil {
-					log.Printf("the string Converter did not work : %v", err)
+					return nil, fmt.Errorf("column conversion error: %v", err)
 				}
-				splittedData := strings.Split(line, splitField)
 				if len(splittedData) > column {
 					fieldsChosen.WriteString(splittedData[column])
 					fieldsChosen.WriteString(printingField)
 				} else {
-					log.Printf("the chosen column %v is greater than the length of the string %v", column, len(splittedData))
+					return nil, fmt.Errorf("chosen column %v is out of bounds (line length: %v)", column, len(splittedData))
 				}
 			}
 			newLine := "\n"
 			fieldsChosen.WriteString(newLine)
 		}
 	}
-	return &Awk{Data: fieldsChosen.String()}
+	return &Awk{Data: fieldsChosen.String()}, nil
 }
 
 func (a *Awk) Replace(old, new string) *Awk {
