@@ -19,27 +19,40 @@ func NewAwk(data string) *Awk {
 
 func (a *Awk) DataSplit(splitField, printingField string, chosenColumns ...string) (*Awk, error) {
 
-	reader := strings.NewReader(a.Data)
-	scanner := bufio.NewScanner(reader)
+	if a.Data == "" {
+		return &Awk{Data: ""}, nil
+	}
+
+	// Precompute the chosen column indices to avoid repeated string-to-int conversion
+	columns := make([]int, len(chosenColumns))
+	for i, col := range chosenColumns {
+		index, err := strconv.Atoi(col)
+		if err != nil {
+			return nil, fmt.Errorf("column conversion error: %v", err)
+		}
+		columns[i] = index
+	}
+
 	var fieldsChosen strings.Builder
+
+	scanner := bufio.NewScanner(strings.NewReader(a.Data))
+
 	for scanner.Scan() {
+
 		line := scanner.Text()
 		splittedData := strings.Split(line, splitField)
-		if len(chosenColumns) == 0 {
+
+		if len(columns) == 0 {
 			for _, all := range splittedData {
 				fieldsChosen.WriteString(all)
 				fieldsChosen.WriteString(printingField)
 			}
 			newLine := "\n"
 			fieldsChosen.WriteString(newLine)
+
 		} else {
-			for _, value := range chosenColumns {
-				c := value
-				column, err := strconv.Atoi(c)
-				if err != nil {
-					return nil, fmt.Errorf("column conversion error: %v", err)
-				}
-				if len(splittedData) > column {
+			for _, column := range columns {
+				if column >= 0 && column < len(splittedData) {
 					fieldsChosen.WriteString(splittedData[column])
 					fieldsChosen.WriteString(printingField)
 				} else {
