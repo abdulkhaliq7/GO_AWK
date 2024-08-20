@@ -3,10 +3,11 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github/abdulkhaliq/awk/awk"
 	"log"
 	"os"
 	"time"
+
+	"github.com/abdulkhaliq7/GO_AWK/awk"
 )
 
 func main() {
