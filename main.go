@@ -16,6 +16,8 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
+
+	/*
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -31,4 +33,6 @@ func main() {
 		fmt.Println(outputTwo.Data)
 	}
 	fmt.Println("Total time taken to complete The whole process : ", time.Since(start))
+
+	*/
 }
